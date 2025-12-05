@@ -152,27 +152,30 @@ To build a real-time hand-tracking prototype that:
 
 ## 📊 System Flow Diagram
 
-```mermaid
 flowchart TD
 
-A[Start Webcam Stream] --> B[Capture Video Frame]
-B --> C[Convert to HSV]
-C --> D[Apply Skin Mask\n(inRange + Morphological Filter)]
-D --> E[Find Contours]
-E -->|largest contour| F[Calculate Hand Position & Distance to Virtual Box]
-E -->|no contour| B
+A([Start Webcam Stream]) --> B[Capture Video Frame]
+B --> C[Convert Frame to HSV Color Space]
+C --> D[Apply Skin Mask<br>(inRange + Morphological Filtering)]
+D --> E[Find Hand Contours]
 
-F --> G{Distance < Danger Threshold?}
-G -->|Yes| H[DANGER<br>Show Red Overlay + "DANGER DANGER"]
-G -->|No| I{Distance < Warning Threshold?}
-I -->|Yes| J[WARNING<br>Orange Boundary]
-I -->|No| K[SAFE<br>Green Boundary]
+E -->|Contour Found| F[Extract Largest Contour<br>Compute Hand Position + Distance to Box]
+E -->|No Hand Detected| B
 
-H --> L[Display Output]
+F --> G{Is Distance < Danger Threshold?}
+G -->|YES| H[[DANGER State<br>Red Overlay + "DANGER DANGER"]]
+G -->|NO| I{Is Distance < Warning Threshold?}
+
+I -->|YES| J[[WARNING State<br>Orange Boundary]]
+I -->|NO| K[[SAFE State<br>Green Boundary]]
+
+H --> L[Render Output Frame]
 J --> L
 K --> L
-L --> B[Next Frame Loop]
-```
+
+L --> B[Loop to Next Frame]
+
+
 ---
 
 ##  🏁 Output Example Behavior
